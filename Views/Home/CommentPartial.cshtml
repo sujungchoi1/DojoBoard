@@ -1,0 +1,10 @@
+@model int 
+@* from model="msg.MessageId" - only passing in a single model field *@
+
+<form action="/create-comment" method="post">
+    <label for="">post a comment</label>
+    <textarea name="commentBody" class="form-control" rows="1"></textarea>
+    <input type="hidden" name="messageId" value="@Model">
+    <span></span>
+    <button class="btn btn-success" style="margin-top:20px">Leave a comment!</button>
+</form>

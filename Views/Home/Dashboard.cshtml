@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>Document</title>
+</head>
+@using System
+@model Message
+<body>
+
+    <nav class="navbar navbar-light bg-light justify-content-between">
+        <a class="navbar-brand">Dojo Board</a>
+        <div>
+            <span class="navbar-text">Welcome @ViewBag.CurrentUser.FirstName</span>
+            <a style="margin-left: 30px" href="/logout">Log Out</a>
+        </div>
+    </nav>
+<div class="wrapper" style="width: 80%; margin: 30px auto">
+
+    <form action="/create-message" method="post">
+        <label asp-for="Content" class="form-label"></label>
+        <textarea asp-for="Content" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Content" class="text-warning"></span>
+        <button class="btn btn-primary" style="margin-top:20px">Post a message</button>
+    </form>
+
+    @foreach(Message msg in @ViewBag.AllMessages)
+    {
+        <h3 style="margin-top: 30px">@msg.PostedBy.FirstName @msg.PostedBy.LastName - @msg.CreatedAt.ToString("MMM dd, yyyy HH:mm tt")</h3>
+        <div style="margin-left: 50px;">
+        <div style="background-color:lavenderBlush;">
+            <p>@msg.Content</p>
+            <div>
+
+            @if (ViewBag.CurrentUser.UserId == msg.PostedBy.UserId && msg.CreatedAt.AddMinutes(30) > DateTime.Now)
+                        {
+                            <form action="/delete/@msg.MessageId" method="post">
+                                <button class="btn btn-outline-danger">Delete Message?</button>
+                                <p style="color: orange">* You can delete your message only if it was made in the last 30 minutes.</p>
+                            </form>
+                        }
+
+            </div>
+        </div>
+        @foreach(var comment in msg.Comments)
+        {
+        <p style="background-color: powderBlue; margin-left: 30px">
+            --> @comment.Content
+        </p>
+        }
+        <partial name="CommentPartial" model="msg.MessageId"></partial>
+        
+        </div>
+
+    }
+</div>
+
+</body>
+
+</html>
